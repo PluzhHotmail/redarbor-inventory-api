@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="Inventory.Api/Inventory.Api.csproj" Id="aecddcb4-022e-47b6-b003-e6cd3a654836" />
+    <Project Path="Inventory.Application/Inventory.Application.csproj" Id="926ef3bb-8ab4-4ad7-b86e-bd7990437371" />
+    <Project Path="Inventory.Domain/Inventory.Domain.csproj" Id="9c0e1035-5bbb-48f3-99b5-ce48d3c2a9d5" />
+    <Project Path="Inventory.Infrastructure/Inventory.Infrastructure.csproj" Id="5122ce71-f609-46a0-b141-6061a94c77e0" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="Inventory.Tests/Inventory.Tests.csproj" Id="37279726-6d7b-45b9-9ba9-f9aecdc9e98a" />
+  </Folder>
+</Solution>
