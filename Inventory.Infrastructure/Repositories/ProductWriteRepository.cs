@@ -1,0 +1,36 @@
+﻿using System.Data;
+using Dapper;
+using Inventory.Application.Interfaces;
+using Inventory.Domain.Entities;
+
+namespace Inventory.Infrastructure.Repositories;
+
+public sealed class ProductWriteRepository : IProductWriteRepository
+{
+    private readonly IDbConnection connection;
+
+    public ProductWriteRepository(IDbConnection connection)
+    {
+        this.connection = connection;
+    }
+
+    public async Task CreateAsync(Product product)
+    {
+        const string sql = @"
+        INSERT INTO Products (Id, Name, CategoryId, Stock)
+        VALUES (@Id, @Name, @CategoryId, @Stock)";
+
+        await connection.ExecuteAsync(sql, product);
+    }
+
+    public async Task UpdateAsync(Product product)
+    {
+        const string sql = @"
+        UPDATE Products
+        SET Name = @Name,
+            Stock = @Stock
+        WHERE Id = @Id";
+
+        await connection.ExecuteAsync(sql, product);
+    }
+}
