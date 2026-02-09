@@ -17,8 +17,8 @@ public sealed class ProductWriteRepository : IProductWriteRepository
     public async Task CreateAsync(Product product)
     {
         const string sql = @"
-        INSERT INTO Products (Id, Name, CategoryId, Stock)
-        VALUES (@Id, @Name, @CategoryId, @Stock)";
+        INSERT INTO Products (Id, Name, Stock, Status, CategoryId)
+        VALUES (@Id, @Name, @Stock, @Status, @CategoryId)";
 
         await connection.ExecuteAsync(sql, product);
     }
@@ -28,9 +28,24 @@ public sealed class ProductWriteRepository : IProductWriteRepository
         const string sql = @"
         UPDATE Products
         SET Name = @Name,
-            Stock = @Stock
+            Stock = @Stock,
+            CategoryId = @CategoryId
         WHERE Id = @Id";
 
         await connection.ExecuteAsync(sql, product);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        const string sql = @"
+        UPDATE Products
+        SET Status = @Status
+        WHERE Id = @Id";
+
+        await connection.ExecuteAsync(sql, new
+        {
+            Id = id,
+            Status = false
+        });
     }
 }

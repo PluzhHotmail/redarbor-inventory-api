@@ -6,13 +6,16 @@ public sealed class Category
 
     public string Name { get; private set; }
 
+    public bool Status { get; private set; }
+
     private Category()
     {
     }
 
-    public Category(Guid id, string name)
+    public Category(Guid id, string name, bool status)
     {
         Id = id;
         Name = name;
+        Status = status;
     }
 }

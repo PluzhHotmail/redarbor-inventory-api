@@ -3,23 +3,23 @@ using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Commands;
 
-public sealed class CreateProductCommandHandler
+public sealed class UpdateProductCommandHandler
 {
     private readonly IProductWriteRepository productWriteRepository;
 
-    public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
+    public UpdateProductCommandHandler(IProductWriteRepository productWriteRepository)
     {
         this.productWriteRepository = productWriteRepository;
     }
 
-    public async Task HandleAsync(CreateProductCommand command)
+    public async Task HandleAsync(UpdateProductCommand command)
     {
         var product = new Product(
-            Guid.NewGuid(),
+            command.Id,
             command.Name,
             command.Stock,
             command.CategoryId);
 
-        await productWriteRepository.CreateAsync(product);
+        await productWriteRepository.UpdateAsync(product);
     }
 }

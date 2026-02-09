@@ -16,7 +16,7 @@ public sealed class ProductReadRepository : IProductReadRepository
 
     public async Task<IReadOnlyCollection<Product>> GetAllAsync()
     {
-        return await context.Products.AsNoTracking().ToListAsync();
+        return await context.Products.Where(p => p.Status == true).AsNoTracking().ToListAsync();
     }
 
     public async Task<Product?> GetByIdAsync(Guid id)

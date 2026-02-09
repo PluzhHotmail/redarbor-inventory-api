@@ -24,7 +24,10 @@ builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
 builder.Services.AddScoped<GetProductsQueryHandler>();
+builder.Services.AddScoped<GetProductByIdQueryHandler>();
 builder.Services.AddScoped<CreateProductCommandHandler>();
+builder.Services.AddScoped<UpdateProductCommandHandler>();
+builder.Services.AddScoped<DeleteProductCommandHandler>();
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 
@@ -56,11 +59,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
