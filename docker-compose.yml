@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: inventory-sqlserver
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./docker/sqlserver/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/sqlserver/entrypoint.sh:/entrypoint.sh
+    command: ["/bin/bash", "/entrypoint.sh"]
+
+  api:
+    build: .
+    container_name: inventory-api
+    environment:
+      DATABASE_CONNECTION_STRING: "Server=sqlserver;Database=InventoryDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;"
+      JWT_SECRET: "this-is-a-very-long-jwt-secret-key-for-testing-only"
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserver
