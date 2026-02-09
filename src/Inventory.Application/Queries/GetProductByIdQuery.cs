@@ -1,3 +1,4 @@
-﻿namespace Inventory.Application.Queries;
-
-public record GetProductByIdQuery(Guid Id);
+﻿namespace Inventory.Application.Queries
+{
+    public record GetProductByIdQuery(Guid Id);
+}

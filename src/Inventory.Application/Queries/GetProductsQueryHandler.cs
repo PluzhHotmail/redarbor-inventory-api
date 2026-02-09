@@ -1,28 +1,29 @@
 ﻿using Inventory.Application.DTOs;
 using Inventory.Application.Interfaces;
 
-namespace Inventory.Application.Queries;
-
-public sealed class GetProductsQueryHandler
+namespace Inventory.Application.Queries
 {
-    private readonly IProductReadRepository productReadRepository;
-
-    public GetProductsQueryHandler(IProductReadRepository productReadRepository)
+    public sealed class GetProductsQueryHandler
     {
-        this.productReadRepository = productReadRepository;
-    }
+        private readonly IProductReadRepository productReadRepository;
 
-    public async Task<IReadOnlyCollection<ProductDto>> HandleAsync(GetProductsQuery query)
-    {
-        var products = await productReadRepository.GetAllAsync();
+        public GetProductsQueryHandler(IProductReadRepository productReadRepository)
+        {
+            this.productReadRepository = productReadRepository;
+        }
 
-        return products
-            .Select(product => new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Stock = product.Stock
-            })
-            .ToList();
+        public async Task<IReadOnlyCollection<ProductDto>> HandleAsync(GetProductsQuery query)
+        {
+            var products = await productReadRepository.GetAllAsync();
+
+            return products
+                .Select(product => new ProductDto
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Stock = product.Stock
+                })
+                .ToList();
+        }
     }
 }

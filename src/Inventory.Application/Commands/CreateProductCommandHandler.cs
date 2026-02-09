@@ -1,25 +1,26 @@
 ﻿using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 
-namespace Inventory.Application.Commands;
-
-public sealed class CreateProductCommandHandler
+namespace Inventory.Application.Commands
 {
-    private readonly IProductWriteRepository productWriteRepository;
-
-    public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
+    public sealed class CreateProductCommandHandler
     {
-        this.productWriteRepository = productWriteRepository;
-    }
+        private readonly IProductWriteRepository productWriteRepository;
 
-    public async Task HandleAsync(CreateProductCommand command)
-    {
-        var product = new Product(
-            Guid.NewGuid(),
-            command.Name,
-            command.Stock,
-            command.CategoryId);
+        public CreateProductCommandHandler(IProductWriteRepository productWriteRepository)
+        {
+            this.productWriteRepository = productWriteRepository;
+        }
 
-        await productWriteRepository.CreateAsync(product);
+        public async Task HandleAsync(CreateProductCommand command)
+        {
+            var product = new Product(
+                Guid.NewGuid(),
+                command.Name,
+                command.Stock,
+                command.CategoryId);
+
+            await productWriteRepository.CreateAsync(product);
+        }
     }
 }

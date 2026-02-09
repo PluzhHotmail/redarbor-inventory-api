@@ -1,6 +1,6 @@
 ﻿namespace Inventory.Application.Queries
 {
-    public sealed class GetProductsQuery
+    public sealed class GetCategoriesQuery
     {
     }
 }

@@ -1,25 +1,26 @@
 ﻿using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 
-namespace Inventory.Application.Commands;
-
-public sealed class UpdateProductCommandHandler
+namespace Inventory.Application.Commands
 {
-    private readonly IProductWriteRepository productWriteRepository;
-
-    public UpdateProductCommandHandler(IProductWriteRepository productWriteRepository)
+    public sealed class UpdateProductCommandHandler
     {
-        this.productWriteRepository = productWriteRepository;
-    }
+        private readonly IProductWriteRepository productWriteRepository;
 
-    public async Task HandleAsync(UpdateProductCommand command)
-    {
-        var product = new Product(
-            command.Id,
-            command.Name,
-            command.Stock,
-            command.CategoryId);
+        public UpdateProductCommandHandler(IProductWriteRepository productWriteRepository)
+        {
+            this.productWriteRepository = productWriteRepository;
+        }
 
-        await productWriteRepository.UpdateAsync(product);
+        public async Task HandleAsync(UpdateProductCommand command)
+        {
+            var product = new Product(
+                command.Id,
+                command.Name,
+                command.Stock,
+                command.CategoryId);
+
+            await productWriteRepository.UpdateAsync(product);
+        }
     }
 }

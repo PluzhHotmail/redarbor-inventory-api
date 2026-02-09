@@ -1,44 +1,42 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
+using System.Data;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public sealed class ProductWriteRepository : IProductWriteRepository
+    public sealed class CategoryWriteRepository : ICategoryWriteRepository
     {
         private readonly IDbConnection connection;
 
-        public ProductWriteRepository(IDbConnection connection)
+        public CategoryWriteRepository(IDbConnection connection)
         {
             this.connection = connection;
         }
 
-        public async Task CreateAsync(Product product)
+        public async Task CreateAsync(Category category)
         {
             const string sql = @"
-        INSERT INTO Products (Id, Name, Stock, Status, CategoryId)
-        VALUES (@Id, @Name, @Stock, @Status, @CategoryId)";
+        INSERT INTO Categories (Id, Name, Status)
+        VALUES (@Id, @Name, @Status)";
 
-            await connection.ExecuteAsync(sql, product);
+            await connection.ExecuteAsync(sql, category);
         }
 
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(Category category)
         {
             const string sql = @"
-        UPDATE Products
-        SET Name = @Name,
-            Stock = @Stock,
-            CategoryId = @CategoryId
+        UPDATE Categories
+        SET Name = @Name
         WHERE Id = @Id";
 
-            await connection.ExecuteAsync(sql, product);
+            await connection.ExecuteAsync(sql, category);
         }
 
         public async Task DeleteAsync(Guid id)
         {
             const string sql = @"
-        UPDATE Products
+        UPDATE Categories
         SET Status = @Status
         WHERE Id = @Id";
 

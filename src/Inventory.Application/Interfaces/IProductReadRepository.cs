@@ -1,10 +1,11 @@
 ﻿using Inventory.Domain.Entities;
 
-namespace Inventory.Application.Interfaces;
-
-public interface IProductReadRepository
+namespace Inventory.Application.Interfaces
 {
-    Task<Product?> GetByIdAsync(Guid id);
+    public interface IProductReadRepository
+    {
+        Task<Product?> GetByIdAsync(Guid id);
 
-    Task<IReadOnlyCollection<Product>> GetAllAsync();
+        Task<IReadOnlyCollection<Product>> GetAllAsync();
+    }
 }

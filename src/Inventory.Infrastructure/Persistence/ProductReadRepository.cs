@@ -3,25 +3,26 @@ using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory.Infrastructure.Repositories;
-
-public sealed class ProductReadRepository : IProductReadRepository
+namespace Inventory.Infrastructure.Repositories
 {
-    private readonly InventoryReadDbContext context;
-
-    public ProductReadRepository(InventoryReadDbContext context)
+    public sealed class ProductReadRepository : IProductReadRepository
     {
-        this.context = context;
-    }
+        private readonly InventoryReadDbContext context;
 
-    public async Task<IReadOnlyCollection<Product>> GetAllAsync()
-    {
-        return await context.Products.Where(p => p.Status == true).AsNoTracking().ToListAsync();
-    }
+        public ProductReadRepository(InventoryReadDbContext context)
+        {
+            this.context = context;
+        }
 
-    public async Task<Product?> GetByIdAsync(Guid id)
-    {
-        return await context.Products.AsNoTracking()
-            .FirstOrDefaultAsync(product => product.Id == id);
+        public async Task<IReadOnlyCollection<Product>> GetAllAsync()
+        {
+            return await context.Products.Where(p => p.Status == true).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Product?> GetByIdAsync(Guid id)
+        {
+            return await context.Products.AsNoTracking()
+                .FirstOrDefaultAsync(product => product.Id == id);
+        }
     }
 }

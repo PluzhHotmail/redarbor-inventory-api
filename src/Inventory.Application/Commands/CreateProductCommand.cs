@@ -1,8 +1,9 @@
-﻿namespace Inventory.Application.Commands;
-
-public sealed class CreateProductCommand
+﻿namespace Inventory.Application.Commands
 {
-    public string Name { get; init; } = string.Empty;
-    public int Stock { get; init; } = 0;
-    public Guid CategoryId { get; init; } = Guid.Empty;
+    public sealed class CreateProductCommand
+    {
+        public string Name { get; init; } = string.Empty;
+        public int Stock { get; init; } = 0;
+        public Guid CategoryId { get; init; } = Guid.Empty;
+    }
 }
