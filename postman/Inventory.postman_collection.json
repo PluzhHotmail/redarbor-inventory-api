@@ -92,7 +92,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"Id\": \"9d3a00b8-e034-4e2b-aa20-efa0b12decda\",\r\n    \"Name\": \"Cat00\"\r\n}",
+              "raw": "{\r\n    \"Id\": \"84f2c2e2-1cbf-45ed-8629-0bdc941718dc\",\r\n    \"Name\": \"Cat00\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -129,7 +129,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"Id\": \"9d3a00b8-e034-4e2b-aa20-efa0b12decda\"\r\n}",
+              "raw": "{\r\n    \"Id\": \"84f2c2e2-1cbf-45ed-8629-0bdc941718dc\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -265,7 +265,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"Id\": \"a8fd88ae-e5ac-47fa-bab2-cfdb305053e3\",\r\n    \"Name\": \"Prueba00\",\r\n    \"Stock\": 10\r\n}",
+              "raw": "{\r\n    \"Id\": \"a3535121-9117-49d2-9aad-5a396bfd9712\",\r\n    \"Name\": \"Prueba00\",\r\n    \"Stock\": 10\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -341,7 +341,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"ProductId\": \"91b786d0-2c55-473b-b523-8d2d12422cda\",\r\n    \"Quantity\": 5,\r\n    \"Type\": 1\r\n}",
+          "raw": "{\r\n    \"ProductId\": \"a3535121-9117-49d2-9aad-5a396bfd9712\",\r\n    \"Quantity\": 5,\r\n    \"Type\": 1\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -349,13 +349,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/api/products",
+          "raw": "{{baseUrl}}/api/inventory/movements",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "api",
-            "products"
+            "inventory",
+            "movements"
           ]
         }
       },
