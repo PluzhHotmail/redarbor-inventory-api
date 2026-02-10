@@ -122,7 +122,7 @@ Controllers and infrastructure components are intentionally excluded from unit t
 ### Test project
 
 ```
-Inventory.Application.Tests
+Inventory.Tests
 ```
 
 Main tested components:
