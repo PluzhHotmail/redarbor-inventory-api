@@ -18,6 +18,10 @@ namespace Inventory.Application.Commands
 
         public async Task HandleAsync(RegisterInventoryMovementCommand command)
         {
+            if (command.Quantity <= 0)
+            {
+                throw new InvalidOperationException("Quantity must be greater than zero");
+            }
             var product = await productReadRepository.GetByIdAsync(command.ProductId);
             if (product is null)
             {
@@ -36,12 +40,16 @@ namespace Inventory.Application.Commands
 
             await inventoryMovementWriteRepository.AddAsync(movement);
 
-            var newStock = command.Type == InventoryMovementType.Entry
-                ? product.Stock + command.Quantity
-                : product.Stock - command.Quantity;
-            product.Stock = newStock;
+            product.Stock = CalculateNewStock(product, command);
 
             await productWriteRepository.UpdateStockAsync(product);
+        }
+
+        private static int CalculateNewStock(Product product, RegisterInventoryMovementCommand command)
+        {
+            return command.Type == InventoryMovementType.Entry
+                ? product.Stock + command.Quantity
+                : product.Stock - command.Quantity;
         }
     }
 }
