@@ -25,5 +25,6 @@ CREATE TABLE InventoryMovements
     Id UNIQUEIDENTIFIER NOT NULL,
     ProductId UNIQUEIDENTIFIER NOT NULL,
     Quantity INT NOT NULL,
+    Type INT NOT NULL,
     CreatedAt DATETIME2 NOT NULL
 );

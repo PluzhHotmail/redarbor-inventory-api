@@ -46,7 +46,7 @@ namespace Inventory.Api.Controllers
         {
             await updateProductCommandHandler.HandleAsync(command);
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete]
@@ -54,7 +54,7 @@ namespace Inventory.Api.Controllers
         {
             await deleteProductCommandHandler.HandleAsync(command);
 
-            return NoContent();
+            return Ok();
         }
 
         [Authorize]
@@ -67,6 +67,5 @@ namespace Inventory.Api.Controllers
 
             return Ok(product);
         }
-
     }
 }

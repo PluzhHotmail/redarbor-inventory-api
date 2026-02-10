@@ -6,7 +6,7 @@ public sealed class Product
 
     public string Name { get; private set; }
 
-    public int Stock { get; private set; }
+    public int Stock { get; set; }
 
     public bool Status { get; private set; }
 

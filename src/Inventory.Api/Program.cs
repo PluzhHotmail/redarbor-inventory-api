@@ -24,6 +24,7 @@ builder.Services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
 builder.Services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
+builder.Services.AddScoped<IInventoryMovementWriteRepository, InventoryMovementWriteRepository>();
 
 builder.Services.AddScoped<GetProductsQueryHandler>();
 builder.Services.AddScoped<GetProductByIdQueryHandler>();
@@ -34,6 +35,7 @@ builder.Services.AddScoped<GetCategoriesQueryHandler>();
 builder.Services.AddScoped<CreateProductCommandHandler>();
 builder.Services.AddScoped<UpdateProductCommandHandler>();
 builder.Services.AddScoped<DeleteProductCommandHandler>();
+builder.Services.AddScoped<RegisterInventoryMovementCommandHandler>();
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 

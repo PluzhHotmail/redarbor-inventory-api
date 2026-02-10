@@ -44,7 +44,7 @@ namespace Inventory.Api.Controllers
         {
             await updateCategoryCommandHandler.HandleAsync(command);
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete]
@@ -52,7 +52,7 @@ namespace Inventory.Api.Controllers
         {
             await deleteCategoryCommandHandler.HandleAsync(command);
 
-            return NoContent();
+            return Ok();
         }
     }
 }

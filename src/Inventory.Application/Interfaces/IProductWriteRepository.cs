@@ -7,5 +7,6 @@ namespace Inventory.Application.Interfaces
         Task CreateAsync(Product product);
         Task UpdateAsync(Product product);
         Task DeleteAsync(Guid id);
+        Task UpdateStockAsync(Product product);
     }
 }
