@@ -6,7 +6,7 @@ public sealed class Product
 
     public string Name { get; private set; }
 
-    public int Stock { get; set; }
+    public int Stock { get; set; } = 0;
 
     public bool Status { get; private set; }
 
@@ -23,20 +23,5 @@ public sealed class Product
         Stock = stock;
         Status = true;
         CategoryId = categoryId;
-    }
-
-    public void IncreaseStock(int quantity)
-    {
-        Stock += quantity;
-    }
-
-    public void DecreaseStock(int quantity)
-    {
-        if (quantity > Stock)
-        {
-            throw new InvalidOperationException("Insufficient stock");
-        }
-
-        Stock -= quantity;
     }
 }

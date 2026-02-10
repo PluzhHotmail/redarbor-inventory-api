@@ -5,8 +5,7 @@ namespace Inventory.Infrastructure.Persistence
 {
     public sealed class InventoryReadDbContext : DbContext
     {
-        public InventoryReadDbContext(DbContextOptions<InventoryReadDbContext> options)
-            : base(options)
+        public InventoryReadDbContext(DbContextOptions<InventoryReadDbContext> options) : base(options)
         {
         }
 

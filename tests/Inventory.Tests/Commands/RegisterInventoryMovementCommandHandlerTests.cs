@@ -13,13 +13,11 @@ namespace Inventory.Tests.Commands
             var productReadRepository = new Mock<IProductReadRepository>();
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
-
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
                 inventoryMovementWriteRepository.Object
             );
-
             var command = new RegisterInventoryMovementCommand
             {
                 ProductId = Guid.NewGuid(),
@@ -37,16 +35,13 @@ namespace Inventory.Tests.Commands
             productReadRepository
                 .Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync((Product)null);
-
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
-
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
                 inventoryMovementWriteRepository.Object
             );
-
             var command = new RegisterInventoryMovementCommand
             {
                 ProductId = Guid.NewGuid(),
@@ -66,21 +61,17 @@ namespace Inventory.Tests.Commands
                 stock: 2,
                 Guid.NewGuid()
             );
-
             var productReadRepository = new Mock<IProductReadRepository>();
             productReadRepository
                 .Setup(r => r.GetByIdAsync(product.Id))
                 .ReturnsAsync(product);
-
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
-
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
                 inventoryMovementWriteRepository.Object
             );
-
             var command = new RegisterInventoryMovementCommand
             {
                 ProductId = product.Id,
@@ -100,21 +91,17 @@ namespace Inventory.Tests.Commands
                 stock: 5,
                 Guid.NewGuid()
             );
-
             var productReadRepository = new Mock<IProductReadRepository>();
             productReadRepository
                 .Setup(r => r.GetByIdAsync(product.Id))
                 .ReturnsAsync(product);
-
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
-
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
                 inventoryMovementWriteRepository.Object
             );
-
             var command = new RegisterInventoryMovementCommand
             {
                 ProductId = product.Id,
@@ -125,12 +112,10 @@ namespace Inventory.Tests.Commands
             await handler.HandleAsync(command);
 
             Assert.Equal(8, product.Stock);
-
             inventoryMovementWriteRepository.Verify(
                 r => r.AddAsync(It.IsAny<InventoryMovement>()),
                 Times.Once
             );
-
             productWriteRepository.Verify(
                 r => r.UpdateStockAsync(product),
                 Times.Once
@@ -146,21 +131,17 @@ namespace Inventory.Tests.Commands
                 stock: 10,
                 Guid.NewGuid()
             );
-
             var productReadRepository = new Mock<IProductReadRepository>();
             productReadRepository
                 .Setup(r => r.GetByIdAsync(product.Id))
                 .ReturnsAsync(product);
-
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
-
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
                 inventoryMovementWriteRepository.Object
             );
-
             var command = new RegisterInventoryMovementCommand
             {
                 ProductId = product.Id,
@@ -176,7 +157,6 @@ namespace Inventory.Tests.Commands
                 r => r.AddAsync(It.IsAny<InventoryMovement>()),
                 Times.Once
             );
-
             productWriteRepository.Verify(
                 r => r.UpdateStockAsync(product),
                 Times.Once

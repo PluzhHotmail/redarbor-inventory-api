@@ -19,6 +19,7 @@ namespace Inventory.Api.Controllers
         public async Task<IActionResult> RegisterMovement([FromBody] RegisterInventoryMovementCommand command)
         {
             await registerInventoryMovementCommandHandler.HandleAsync(command);
+
             return Ok();
         }
     }

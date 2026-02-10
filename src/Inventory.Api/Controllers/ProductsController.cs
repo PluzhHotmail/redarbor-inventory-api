@@ -14,7 +14,7 @@ namespace Inventory.Api.Controllers
         private readonly CreateProductCommandHandler createProductCommandHandler;
         private readonly UpdateProductCommandHandler updateProductCommandHandler;
         private readonly DeleteProductCommandHandler deleteProductCommandHandler;
-        private readonly GetProductByIdQueryHandler _getProductById;
+        private readonly GetProductByIdQueryHandler getProductById;
 
         public ProductsController(GetProductsQueryHandler getProductsQueryHandler, CreateProductCommandHandler createProductCommandHandler, UpdateProductCommandHandler updateProductCommandHandler, DeleteProductCommandHandler deleteProductCommandHandler, GetProductByIdQueryHandler getProductById)
         {
@@ -22,15 +22,19 @@ namespace Inventory.Api.Controllers
             this.createProductCommandHandler = createProductCommandHandler;
             this.updateProductCommandHandler = updateProductCommandHandler;
             this.deleteProductCommandHandler = deleteProductCommandHandler;
-            this._getProductById = getProductById;
+            this.getProductById = getProductById;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var result = await getProductsQueryHandler.HandleAsync(new GetProductsQuery());
+            var products = await getProductsQueryHandler.HandleAsync(new GetProductsQuery());
+            if (products == null)
+            {
+                return NotFound();
+            }
 
-            return Ok(result);
+            return Ok(products);
         }
 
         [HttpPost]
@@ -57,13 +61,14 @@ namespace Inventory.Api.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var product = await _getProductById.HandleAsync(new GetProductByIdQuery(id));
+            var product = await getProductById.HandleAsync(new GetProductByIdQuery(id));
             if (product == null)
+            {
                 return NotFound();
+            }
 
             return Ok(product);
         }

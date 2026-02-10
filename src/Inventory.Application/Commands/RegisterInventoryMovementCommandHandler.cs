@@ -47,9 +47,7 @@ namespace Inventory.Application.Commands
 
         private static int CalculateNewStock(Product product, RegisterInventoryMovementCommand command)
         {
-            return command.Type == InventoryMovementType.Entry
-                ? product.Stock + command.Quantity
-                : product.Stock - command.Quantity;
+            return command.Type == InventoryMovementType.Entry ? product.Stock + command.Quantity : product.Stock - command.Quantity;
         }
     }
 }

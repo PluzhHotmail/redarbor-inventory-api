@@ -15,12 +15,16 @@ namespace Inventory.Infrastructure.Persistence
 
         public async Task<IReadOnlyCollection<Category>> GetAllAsync()
         {
-            return await context.Categories.Where(p => p.Status == true).AsNoTracking().ToListAsync();
+            return await context.Categories
+                .Where(p => p.Status == true)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Category?> GetByIdAsync(Guid id)
         {
-            return await context.Categories.AsNoTracking()
+            return await context.Categories
+                .AsNoTracking()
                 .FirstOrDefaultAsync(product => product.Id == id);
         }
     }

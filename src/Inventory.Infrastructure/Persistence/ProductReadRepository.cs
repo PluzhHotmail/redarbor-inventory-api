@@ -1,9 +1,8 @@
 ﻿using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
-using Inventory.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory.Infrastructure.Repositories
+namespace Inventory.Infrastructure.Persistence
 {
     public sealed class ProductReadRepository : IProductReadRepository
     {
@@ -16,12 +15,16 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task<IReadOnlyCollection<Product>> GetAllAsync()
         {
-            return await context.Products.Where(p => p.Status == true).AsNoTracking().ToListAsync();
+            return await context.Products
+                .Where(p => p.Status == true)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            return await context.Products.AsNoTracking()
+            return await context.Products
+                .AsNoTracking()
                 .FirstOrDefaultAsync(product => product.Id == id);
         }
     }

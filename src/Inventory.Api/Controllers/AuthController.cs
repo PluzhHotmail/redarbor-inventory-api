@@ -17,7 +17,6 @@ public sealed class AuthController : ControllerBase
     {
         var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
         var key = Encoding.ASCII.GetBytes(secret);
-
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -29,7 +28,6 @@ public sealed class AuthController : ControllerBase
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
         };
-
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
