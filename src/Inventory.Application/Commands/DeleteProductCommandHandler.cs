@@ -1,22 +1,35 @@
 ﻿using FluentValidation;
+using Inventory.Application.Exceptions;
 using Inventory.Application.Interfaces;
 
 namespace Inventory.Application.Commands
 {
     public sealed class DeleteProductCommandHandler
     {
-        private readonly IProductWriteRepository productWriteRepository;
-        private readonly IValidator<DeleteProductCommand> validator;
+        private readonly IProductReadRepository _productReadRepository;
+        private readonly IProductWriteRepository _productWriteRepository;
+        private readonly IValidator<DeleteProductCommand> _validator;
 
-        public DeleteProductCommandHandler(IProductWriteRepository productWriteRepository, IValidator<DeleteProductCommand> validator)
+        public DeleteProductCommandHandler(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IValidator<DeleteProductCommand> validator)
         {
-            this.productWriteRepository = productWriteRepository;
-            this.validator = validator;
+            _productReadRepository = productReadRepository;
+            _productWriteRepository = productWriteRepository;
+            _validator = validator;
         }
-        public async Task HandleAsync(DeleteProductCommand command)
+
+        public async Task HandleAsync(DeleteProductCommand command, CancellationToken cancellationToken = default)
         {
-            await validator.ValidateAndThrowAsync(command);
-            await productWriteRepository.DeleteAsync(command.Id);
+            var validationResult = await _validator.ValidateAsync(command, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+            var existingProduct = await _productReadRepository.GetByIdAsync(command.Id);
+            if (existingProduct is null)
+            {
+                throw new NotFoundException("Product not found.");
+            }
+            await _productWriteRepository.DeleteAsync(command.Id);
         }
     }
 }

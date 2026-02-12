@@ -24,4 +24,12 @@ public sealed class Product
         Status = true;
         CategoryId = categoryId;
     }
+
+    public void Update(string name, int stock, Guid categoryId)
+    {
+        Name = name;
+        Stock = stock;
+        CategoryId = categoryId;
+    }
+
 }

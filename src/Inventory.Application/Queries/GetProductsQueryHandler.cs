@@ -12,7 +12,7 @@ namespace Inventory.Application.Queries
             this.productReadRepository = productReadRepository;
         }
 
-        public async Task<IReadOnlyCollection<ProductDto>> HandleAsync(GetProductsQuery query)
+        public async Task<IReadOnlyCollection<ProductDto>> HandleAsync(GetProductsQuery query, CancellationToken cancellationToken = default)
         {
             var products = await productReadRepository.GetAllAsync();
 

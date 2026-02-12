@@ -1,78 +1,107 @@
-﻿using FluentValidation;
-using Inventory.Application.Exceptions;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
+using FluentValidation;
+using Inventory.Application.Exceptions;
 
 namespace Inventory.Api.Middlewares
 {
     public sealed class GlobalExceptionMiddleware
     {
-        private readonly RequestDelegate next;
-        private readonly ILogger<GlobalExceptionMiddleware> logger;
+        private readonly RequestDelegate _next;
+        private readonly ILogger<GlobalExceptionMiddleware> _logger;
 
         public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
         {
-            this.next = next;
-            this.logger = logger;
+            _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await next(context);
+                await _next(context);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Unhandled exception occurred.");
+                // Capturamos la excepción raíz
+                var baseException = ex.GetBaseException();
+                _logger.LogError(baseException, "Unhandled exception occurred.");
 
-                await HandleExceptionAsync(context, ex);
+                await HandleExceptionAsync(context, baseException);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var statusCode = HttpStatusCode.InternalServerError;
-            var errorCode = "INTERNAL_SERVER_ERROR";
-            var message = "An unexpected error occurred.";
+            context.Response.ContentType = "application/json";
+            object response;
+            int statusCode;
 
             switch (exception)
             {
                 case ValidationException validationException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    errorCode = "VALIDATION_ERROR";
-                    message = string.Join(" | ", validationException.Errors.Select(e => e.ErrorMessage));
+                    statusCode = (int)HttpStatusCode.BadRequest;
+                    response = new
+                    {
+                        error = new
+                        {
+                            message = "Validation failed.",
+                            code = "VALIDATION_ERROR",
+                            timestamp = DateTime.UtcNow,
+                            details = validationException.Errors.Select(e => new
+                            {
+                                field = e.PropertyName,
+                                error = e.ErrorMessage
+                            })
+                        }
+                    };
                     break;
 
-                case InvalidOperationException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    errorCode = "INVALID_OPERATION";
-                    message = exception.Message;
+                case NotFoundException notFoundException:
+                    statusCode = (int)HttpStatusCode.NotFound;
+                    response = new
+                    {
+                        error = new
+                        {
+                            message = notFoundException.Message,
+                            code = "NOT_FOUND",
+                            timestamp = DateTime.UtcNow
+                        }
+                    };
                     break;
 
-                case NotFoundException:
-                    statusCode = HttpStatusCode.NotFound;
-                    errorCode = "NOT_FOUND";
-                    message = exception.Message;
+                case InvalidOperationException invalidOperationException:
+                    statusCode = (int)HttpStatusCode.BadRequest;
+                    response = new
+                    {
+                        error = new
+                        {
+                            message = invalidOperationException.Message,
+                            code = "INVALID_OPERATION",
+                            timestamp = DateTime.UtcNow
+                        }
+                    };
+                    break;
+
+                default:
+                    // Siempre devolvemos un mensaje genérico si no es un tipo conocido
+                    statusCode = (int)HttpStatusCode.InternalServerError;
+                    response = new
+                    {
+                        error = new
+                        {
+                            message = exception.Message, // aquí podemos mostrar el mensaje real para debugging
+                            code = "INTERNAL_SERVER_ERROR",
+                            timestamp = DateTime.UtcNow
+                        }
+                    };
                     break;
             }
 
-            var response = new
-            {
-                error = new
-                {
-                    message,
-                    code = errorCode,
-                    timestamp = DateTime.UtcNow
-                }
-            };
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode;
-
-            var json = JsonSerializer.Serialize(response);
-
-            return context.Response.WriteAsync(json);
+            context.Response.StatusCode = statusCode;
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
         }
     }
 }

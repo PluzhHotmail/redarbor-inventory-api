@@ -13,7 +13,7 @@ namespace Inventory.Application.Queries
             _repository = repository;
         }
 
-        public async Task<Product?> HandleAsync(GetProductByIdQuery query)
+        public async Task<Product?> HandleAsync(GetProductByIdQuery query, CancellationToken cancellationToken = default)
         {
             var product = await _repository.GetByIdAsync(query.Id);
             if (product is null)

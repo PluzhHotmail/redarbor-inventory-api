@@ -18,9 +18,13 @@ namespace Inventory.Application.Commands
             this.validator = validator;
         }
 
-        public async Task HandleAsync(CreateProductCommand command)
+        public async Task HandleAsync(CreateProductCommand command, CancellationToken cancellationToken = default)
         {
-            await validator.ValidateAndThrowAsync(command);
+            var validationResult = await validator.ValidateAsync(command, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
             var category = await categoryReadRepository.GetByIdAsync(command.CategoryId);
             if (category is null)
             {

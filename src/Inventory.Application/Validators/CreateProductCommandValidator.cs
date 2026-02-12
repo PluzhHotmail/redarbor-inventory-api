@@ -9,7 +9,7 @@ namespace Inventory.Application.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .MaximumLength(50);
+                .MaximumLength(100);
             RuleFor(x => x.Stock)
                 .GreaterThanOrEqualTo(0);
             RuleFor(x => x.CategoryId)
