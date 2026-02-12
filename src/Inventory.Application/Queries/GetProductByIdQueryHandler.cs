@@ -1,4 +1,5 @@
-﻿using Inventory.Application.Interfaces;
+﻿using Inventory.Application.Exceptions;
+using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Queries
@@ -14,7 +15,14 @@ namespace Inventory.Application.Queries
 
         public async Task<Product?> HandleAsync(GetProductByIdQuery query)
         {
-            return await _repository.GetByIdAsync(query.Id);
+            var product = await _repository.GetByIdAsync(query.Id);
+
+            if (product is null)
+            {
+                throw new NotFoundException("Product not found.");
+            }
+
+            return product;
         }
     }
 }
