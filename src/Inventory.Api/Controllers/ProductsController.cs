@@ -29,10 +29,6 @@ namespace Inventory.Api.Controllers
         public async Task<IActionResult> GetAllAsync()
         {
             var products = await getProductsQueryHandler.HandleAsync(new GetProductsQuery());
-            if (products == null)
-            {
-                return NotFound();
-            }
 
             return Ok(products);
         }
@@ -65,10 +61,6 @@ namespace Inventory.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await getProductById.HandleAsync(new GetProductByIdQuery(id));
-            if (product == null)
-            {
-                return NotFound();
-            }
 
             return Ok(product);
         }

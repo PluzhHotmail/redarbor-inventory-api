@@ -3,10 +3,12 @@ using Inventory.Application.Commands;
 
 namespace Inventory.Application.Validators
 {
-    public sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+    public sealed class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
     {
-        public CreateProductCommandValidator()
+        public UpdateProductCommandValidator()
         {
+            RuleFor(x => x.Id)
+                .NotEmpty();
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(50);

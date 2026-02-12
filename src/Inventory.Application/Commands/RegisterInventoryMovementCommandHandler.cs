@@ -1,4 +1,5 @@
-﻿using Inventory.Application.Interfaces;
+﻿using FluentValidation;
+using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Commands
@@ -8,16 +9,19 @@ namespace Inventory.Application.Commands
         private readonly IProductReadRepository productReadRepository;
         private readonly IProductWriteRepository productWriteRepository;
         private readonly IInventoryMovementWriteRepository inventoryMovementWriteRepository;
+        private readonly IValidator<RegisterInventoryMovementCommand> validator;
 
-        public RegisterInventoryMovementCommandHandler(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IInventoryMovementWriteRepository inventoryMovementWriteRepository)
+        public RegisterInventoryMovementCommandHandler(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IInventoryMovementWriteRepository inventoryMovementWriteRepository, IValidator<RegisterInventoryMovementCommand> validator)
         {
             this.productReadRepository = productReadRepository;
             this.productWriteRepository = productWriteRepository;
             this.inventoryMovementWriteRepository = inventoryMovementWriteRepository;
+            this.validator = validator;
         }
 
         public async Task HandleAsync(RegisterInventoryMovementCommand command)
         {
+            await validator.ValidateAndThrowAsync(command);
             if (command.Quantity <= 0)
             {
                 throw new InvalidOperationException("Quantity must be greater than zero");
@@ -37,11 +41,8 @@ namespace Inventory.Application.Commands
                 command.Quantity,
                 command.Type
             );
-
             await inventoryMovementWriteRepository.AddAsync(movement);
-
             product.Stock = CalculateNewStock(product, command);
-
             await productWriteRepository.UpdateStockAsync(product);
         }
 

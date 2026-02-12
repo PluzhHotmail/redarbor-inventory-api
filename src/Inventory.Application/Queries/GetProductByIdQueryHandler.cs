@@ -16,7 +16,6 @@ namespace Inventory.Application.Queries
         public async Task<Product?> HandleAsync(GetProductByIdQuery query)
         {
             var product = await _repository.GetByIdAsync(query.Id);
-
             if (product is null)
             {
                 throw new NotFoundException("Product not found.");

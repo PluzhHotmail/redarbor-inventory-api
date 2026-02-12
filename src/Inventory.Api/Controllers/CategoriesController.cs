@@ -14,13 +14,15 @@ namespace Inventory.Api.Controllers
         private readonly CreateCategoryCommandHandler createCategoryCommandHandler;
         private readonly UpdateCategoryCommandHandler updateCategoryCommandHandler;
         private readonly DeleteCategoryCommandHandler deleteCategoryCommandHandler;
+        private readonly GetCategoryByIdQueryHandler getCategoryById;
 
-        public CategoriesController(GetCategoriesQueryHandler getCategoriesQueryHandler, CreateCategoryCommandHandler createCategoryCommandHandler, UpdateCategoryCommandHandler updateCategoryCommandHandler, DeleteCategoryCommandHandler deleteCategoryCommandHandler)
+        public CategoriesController(GetCategoriesQueryHandler getCategoriesQueryHandler, CreateCategoryCommandHandler createCategoryCommandHandler, UpdateCategoryCommandHandler updateCategoryCommandHandler, DeleteCategoryCommandHandler deleteCategoryCommandHandler, GetCategoryByIdQueryHandler getCategoryById)
         {
             this.getCategoriesQueryHandler = getCategoriesQueryHandler;
             this.createCategoryCommandHandler = createCategoryCommandHandler;
             this.updateCategoryCommandHandler = updateCategoryCommandHandler;
             this.deleteCategoryCommandHandler = deleteCategoryCommandHandler;
+            this.getCategoryById = getCategoryById;
         }
 
         [HttpGet]
@@ -53,6 +55,14 @@ namespace Inventory.Api.Controllers
             await deleteCategoryCommandHandler.HandleAsync(command);
 
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var category = await getCategoryById.HandleAsync(new GetCategoryByIdQuery(id));
+
+            return Ok(category);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Inventory.Application.Commands;
+﻿using FluentValidation;
+using Inventory.Application.Commands;
 using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 using Moq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Tests.Commands
 {
@@ -13,10 +15,12 @@ namespace Inventory.Tests.Commands
             var productReadRepository = new Mock<IProductReadRepository>();
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -37,10 +41,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync((Product)null);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -67,10 +73,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -97,10 +105,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -137,10 +147,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
