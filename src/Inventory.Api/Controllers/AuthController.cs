@@ -8,7 +8,8 @@ using System.Text;
 namespace Inventory.Api.Controllers;
 
 [ApiController]
-[Route("api/auth")]
+[ApiVersion("1.0", Deprecated = false)]
+[Route("api/v{version:apiVersion}/[controller]")]
 public sealed class AuthController : ControllerBase
 {
     [HttpPost("token")]

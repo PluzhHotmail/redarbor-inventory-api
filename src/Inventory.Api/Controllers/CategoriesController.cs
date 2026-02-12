@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Inventory.Api.Controllers
 {
     [ApiController]
-    [Route("api/categories")]
+    [ApiVersion("1.0", Deprecated = false)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize]
     public class CategoriesController : ControllerBase
     {

@@ -8,9 +8,12 @@ using Inventory.Infrastructure.Persistence;
 using Inventory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Data;
 using System.Text;
 
@@ -21,8 +24,7 @@ var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_S
 builder.Services.AddDbContext<InventoryReadDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IDbConnection>(_ =>
-    new SqlConnection(connectionString));
+builder.Services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
 
 builder.Services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
 builder.Services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
@@ -56,7 +58,6 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
-
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
@@ -79,17 +80,51 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var provider = builder.Services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+
+    foreach (var description in provider.ApiVersionDescriptions)
+    {
+        options.SwaggerDoc(description.GroupName, new OpenApiInfo
+        {
+            Title = $"Inventory API {description.ApiVersion}",
+            Version = description.ApiVersion.ToString(),
+            Description = description.IsDeprecated ? "Esta versión está obsoleta." : "API versión activa"
+        });
+    }
+});
 
 var app = builder.Build();
 
+var apiProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    foreach (var description in apiProvider.ApiVersionDescriptions)
+    {
+        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                                description.GroupName.ToUpperInvariant());
+    }
+});
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
