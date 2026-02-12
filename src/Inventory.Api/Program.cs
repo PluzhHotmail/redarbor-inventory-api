@@ -1,14 +1,17 @@
-using System.Data;
-using System.Text;
+using FluentValidation;
+using Inventory.Api.Middlewares;
 using Inventory.Application.Commands;
 using Inventory.Application.Interfaces;
 using Inventory.Application.Queries;
+using Inventory.Application.Validators;
 using Inventory.Infrastructure.Persistence;
 using Inventory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +39,8 @@ builder.Services.AddScoped<CreateProductCommandHandler>();
 builder.Services.AddScoped<UpdateProductCommandHandler>();
 builder.Services.AddScoped<DeleteProductCommandHandler>();
 builder.Services.AddScoped<RegisterInventoryMovementCommandHandler>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 
