@@ -12,6 +12,7 @@ namespace Inventory.Api.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public sealed class AuthController : ControllerBase
 {
+    /// <summary>Get authorization token</summary>
     [HttpPost("token")]
     [AllowAnonymous]
     public IActionResult GenerateToken()

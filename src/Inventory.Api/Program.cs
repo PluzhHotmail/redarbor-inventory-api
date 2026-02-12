@@ -1,5 +1,6 @@
 using FluentValidation;
 using Inventory.Api.Middlewares;
+using Inventory.Api.Swagger;
 using Inventory.Application.Commands;
 using Inventory.Application.Interfaces;
 using Inventory.Application.Queries;
@@ -19,11 +20,10 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Base de datos ---
 var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
-
 builder.Services.AddDbContext<InventoryReadDbContext>(options =>
     options.UseSqlServer(connectionString));
-
 builder.Services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
 
 builder.Services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
@@ -32,6 +32,7 @@ builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 builder.Services.AddScoped<IInventoryMovementWriteRepository, InventoryMovementWriteRepository>();
 
+// --- Handlers ---
 builder.Services.AddScoped<GetProductsQueryHandler>();
 builder.Services.AddScoped<GetProductByIdQueryHandler>();
 builder.Services.AddScoped<CreateCategoryCommandHandler>();
@@ -44,6 +45,7 @@ builder.Services.AddScoped<UpdateProductCommandHandler>();
 builder.Services.AddScoped<DeleteProductCommandHandler>();
 builder.Services.AddScoped<RegisterInventoryMovementCommandHandler>();
 
+// --- Validators ---
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<DeleteCategoryCommandValidator>();
@@ -57,6 +59,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+// --- JWT Authentication ---
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
@@ -80,6 +83,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// --- Versionado de API ---
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
@@ -94,11 +98,27 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// --- Health Checks ---
+builder.Services.AddHealthChecks()
+    .AddSqlServer(connectionString, name: "SQL Server");
+
+// --- Controllers ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// --- Swagger ---
 builder.Services.AddSwaggerGen(options =>
 {
-    var provider = builder.Services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+    var provider = builder.Services.BuildServiceProvider()
+                          .GetRequiredService<IApiVersionDescriptionProvider>();
+
+    // XML Comments
+    var xmlFile = "Inventory.Api.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
 
     foreach (var description in provider.ApiVersionDescriptions)
     {
@@ -106,13 +126,19 @@ builder.Services.AddSwaggerGen(options =>
         {
             Title = $"Inventory API {description.ApiVersion}",
             Version = description.ApiVersion.ToString(),
-            Description = description.IsDeprecated ? "Esta versión está obsoleta." : "API versión activa"
+            Description = description.IsDeprecated
+                ? "This API version is deprecated."
+                : "Active API version"
         });
     }
+
+    // Registrar nuestro filtro para respuestas default
+    options.OperationFilter<SwaggerDefaultResponses>();
 });
 
 var app = builder.Build();
 
+// --- Swagger UI ---
 var apiProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
@@ -124,10 +150,16 @@ app.UseSwaggerUI(options =>
     }
 });
 
+// --- Middlewares ---
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// --- Health Checks Endpoints ---
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready");
+
+// --- Controllers ---
 app.MapControllers();
 
 app.Run();
