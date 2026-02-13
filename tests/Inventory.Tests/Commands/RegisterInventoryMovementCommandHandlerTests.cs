@@ -1,4 +1,5 @@
-﻿using Inventory.Application.Commands;
+﻿using FluentValidation;
+using Inventory.Application.Commands;
 using Inventory.Application.Interfaces;
 using Inventory.Domain.Entities;
 using Moq;
@@ -13,10 +14,12 @@ namespace Inventory.Tests.Commands
             var productReadRepository = new Mock<IProductReadRepository>();
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -24,7 +27,6 @@ namespace Inventory.Tests.Commands
                 Quantity = 0,
                 Type = InventoryMovementType.Entry
             };
-
             await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
         }
 
@@ -37,10 +39,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync((Product)null);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -48,7 +52,6 @@ namespace Inventory.Tests.Commands
                 Quantity = 5,
                 Type = InventoryMovementType.Entry
             };
-
             await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
         }
 
@@ -67,10 +70,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -78,7 +83,6 @@ namespace Inventory.Tests.Commands
                 Quantity = 5,
                 Type = InventoryMovementType.Exit
             };
-
             await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(command));
         }
 
@@ -97,10 +101,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -108,18 +114,10 @@ namespace Inventory.Tests.Commands
                 Quantity = 3,
                 Type = InventoryMovementType.Entry
             };
-
             await handler.HandleAsync(command);
-
             Assert.Equal(8, product.Stock);
-            inventoryMovementWriteRepository.Verify(
-                r => r.AddAsync(It.IsAny<InventoryMovement>()),
-                Times.Once
-            );
-            productWriteRepository.Verify(
-                r => r.UpdateStockAsync(product),
-                Times.Once
-            );
+            inventoryMovementWriteRepository.Verify(r => r.AddAsync(It.IsAny<InventoryMovement>()), Times.Once);
+            productWriteRepository.Verify(r => r.UpdateStockAsync(product), Times.Once);
         }
 
         [Fact]
@@ -137,10 +135,12 @@ namespace Inventory.Tests.Commands
                 .ReturnsAsync(product);
             var productWriteRepository = new Mock<IProductWriteRepository>();
             var inventoryMovementWriteRepository = new Mock<IInventoryMovementWriteRepository>();
+            var validator = new Mock<IValidator<RegisterInventoryMovementCommand>>();
             var handler = new RegisterInventoryMovementCommandHandler(
                 productReadRepository.Object,
                 productWriteRepository.Object,
-                inventoryMovementWriteRepository.Object
+                inventoryMovementWriteRepository.Object,
+                validator.Object
             );
             var command = new RegisterInventoryMovementCommand
             {
@@ -148,19 +148,10 @@ namespace Inventory.Tests.Commands
                 Quantity = 4,
                 Type = InventoryMovementType.Exit
             };
-
             await handler.HandleAsync(command);
-
             Assert.Equal(6, product.Stock);
-
-            inventoryMovementWriteRepository.Verify(
-                r => r.AddAsync(It.IsAny<InventoryMovement>()),
-                Times.Once
-            );
-            productWriteRepository.Verify(
-                r => r.UpdateStockAsync(product),
-                Times.Once
-            );
+            inventoryMovementWriteRepository.Verify(r => r.AddAsync(It.IsAny<InventoryMovement>()), Times.Once);
+            productWriteRepository.Verify(r => r.UpdateStockAsync(product), Times.Once);
         }
     }
 }
